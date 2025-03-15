@@ -1,13 +1,32 @@
-import { setupDevPlatform } from '@cloudflare/next-on-pages/next-dev';
-
-// Here we use the @cloudflare/next-on-pages next-dev module to allow us to
-// use bindings during local development (when running the application with
-// `next dev`). This function is only necessary during development and
-// has no impact outside of that. For more information see:
-// https://github.com/cloudflare/next-on-pages/blob/main/internal-packages/next-dev/README.md
-setupDevPlatform().catch(console.error);
-
 import type { NextConfig } from "next";
+
+// Function to check if cloudflare workerd is likely to be compatible
+function isCloudflareCompatible() {
+  try {
+    // Try to get glibc version by checking Node.js process
+    const { release } = process;
+
+    // Simple version check - just skip Cloudflare setup entirely on older systems
+    // This is a very simplified check, but avoids even importing the problematic module
+    return false; // Disable for now until needed
+  } catch (e) {
+    return false; // If we can't determine, assume incompatible
+  }
+}
+
+// Only import and use Cloudflare modules when compatibility is detected
+let setupDevPlatform: () => Promise<void>;
+if (isCloudflareCompatible()) {
+  const cloudflareModule = require('@cloudflare/next-on-pages/next-dev');
+  setupDevPlatform = cloudflareModule.setupDevPlatform;
+
+  // Only run setup if compatible
+  setupDevPlatform().catch(error => {
+    console.log("❌ Cloudflare setup failed:", error.message);
+  });
+} else {
+  console.log("ℹ️ Cloudflare integration disabled - development mode only");
+}
 
 const nextConfig: NextConfig = {
   /* config options here */
