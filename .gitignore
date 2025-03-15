@@ -43,3 +43,6 @@ next-env.d.ts
 # wrangler files
 .wrangler
 .dev.vars
+
+# next config (setup for genstack preview & cloudflare deployment)
+next.config.ts

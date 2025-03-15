@@ -1,3 +1,6 @@
+// Do not modify unless you know what you're doing. 
+// GenStack Preview relies on this config working this way
+// If you accidentally break your app, GenStack can regenerate this for you
 import type { NextConfig } from "next";
 
 // Function to check if cloudflare workerd is likely to be compatible
